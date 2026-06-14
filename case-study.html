@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚨</text></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚨</text></svg>">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Samaritan AI Case Study</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --red: #e63946;
+  --red-dim: #9b1c26;
+  --amber: #f4a261;
+  --green: #52b788;
+  --blue: #4895ef;
+  --bg: #080b10;
+  --bg2: #0d1117;
+  --bg3: #131920;
+  --border: rgba(255,255,255,0.07);
+  --text: #e8edf2;
+  --muted: #6b7280;
+  --glass: rgba(255,255,255,0.03);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;line-height:1.6;overflow-x:hidden;}
+
+/* TYPOGRAPHY */
+.display{font-family:'Space Grotesk',sans-serif;font-weight:700;}
+.mono{font-family:'Space Mono',monospace;}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--red-dim);border-radius:2px;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1rem 2rem;display:flex;justify-content:space-between;align-items:center;background:rgba(8,11,16,0.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
+.nav-logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.1rem;color:var(--red);}
+.nav-links{display:flex;gap:2rem;}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:0.8rem;letter-spacing:0.05em;text-transform:uppercase;transition:color 0.2s;}
+.nav-links a:hover{color:var(--text);}
+
+/* SECTIONS */
+section{padding:6rem 0;}
+.container{max-width:1100px;margin:0 auto;padding:0 2rem;}
+.section-eyebrow{font-family:'Space Mono',monospace;font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--red);margin-bottom:1rem;}
+.section-title{font-family:'Space Grotesk',sans-serif;font-size:clamp(1.8rem,4vw,2.8rem);font-weight:700;line-height:1.15;margin-bottom:1.5rem;}
+.section-body{color:#94a3b8;font-size:1rem;max-width:640px;line-height:1.8;}
+
+/* HERO */
+#hero{min-height:100vh;display:flex;align-items:center;position:relative;overflow:hidden;padding-top:5rem;}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:60px 60px;opacity:0.4;}
+.hero-glow{position:absolute;top:20%;left:50%;transform:translateX(-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(230,57,70,0.12) 0%,transparent 70%);pointer-events:none;}
+.hero-content{position:relative;z-index:2;}
+.hero-badge{display:inline-flex;align-items:center;gap:0.5rem;background:rgba(230,57,70,0.1);border:1px solid rgba(230,57,70,0.3);border-radius:100px;padding:0.4rem 1rem;font-size:0.75rem;color:var(--red);font-family:'Space Mono',monospace;margin-bottom:2rem;}
+.hero-badge span{width:6px;height:6px;background:var(--red);border-radius:50%;animation:pulse 2s infinite;}
+.hero-title{font-family:'Space Grotesk',sans-serif;font-size:clamp(2.5rem,7vw,5rem);font-weight:700;line-height:1.05;margin-bottom:1.5rem;}
+.hero-title .accent{color:var(--red);}
+.hero-sub{font-size:1.1rem;color:#94a3b8;max-width:560px;margin-bottom:3rem;line-height:1.8;}
+.hero-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;max-width:560px;}
+.metric-card{background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:1.25rem;}
+.metric-val{font-family:'Space Grotesk',sans-serif;font-size:1.8rem;font-weight:700;color:var(--red);}
+.metric-label{font-size:0.75rem;color:var(--muted);margin-top:0.25rem;}
+
+/* CARDS */
+.card{background:var(--bg3);border:1px solid var(--border);border-radius:16px;padding:2rem;transition:border-color 0.3s,transform 0.3s;}
+.card:hover{border-color:rgba(230,57,70,0.3);transform:translateY(-2px);}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem;}
+
+/* STAT PILL */
+.stat-pill{display:inline-flex;align-items:center;gap:0.4rem;background:rgba(230,57,70,0.08);border:1px solid rgba(230,57,70,0.2);border-radius:6px;padding:0.2rem 0.6rem;font-size:0.75rem;color:var(--red);font-family:'Space Mono',monospace;}
+
+/* DIVIDER */
+.divider{height:1px;background:var(--border);margin:2rem 0;}
+
+/* PERSONA */
+.persona{background:var(--bg3);border:1px solid var(--border);border-radius:16px;padding:2rem;}
+.persona-avatar{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin-bottom:1rem;}
+.persona-name{font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:600;margin-bottom:0.25rem;}
+.persona-role{font-size:0.8rem;color:var(--muted);margin-bottom:1rem;}
+.persona-tag{display:inline-block;background:var(--glass);border:1px solid var(--border);border-radius:4px;padding:0.2rem 0.5rem;font-size:0.7rem;color:var(--muted);margin:0.2rem;}
+
+/* FEATURE */
+.feature-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;margin-bottom:1.25rem;}
+.feature-title{font-family:'Space Grotesk',sans-serif;font-size:1rem;font-weight:600;margin-bottom:0.5rem;}
+.feature-desc{font-size:0.85rem;color:#94a3b8;line-height:1.7;}
+.feature-rationale{margin-top:0.75rem;padding-top:0.75rem;border-top:1px solid var(--border);font-size:0.75rem;color:var(--muted);font-style:italic;}
+
+/* CHART CONTAINERS */
+.chart-wrap{background:var(--bg3);border:1px solid var(--border);border-radius:16px;padding:1.5rem;}
+.chart-title{font-family:'Space Grotesk',sans-serif;font-size:0.9rem;font-weight:600;margin-bottom:1.25rem;color:var(--text);}
+
+/* ARCH DIAGRAM */
+.arch{background:var(--bg3);border:1px solid var(--border);border-radius:16px;padding:2rem;overflow-x:auto;}
+.arch-layer{margin-bottom:1.5rem;}
+.arch-label{font-family:'Space Mono',monospace;font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);margin-bottom:0.75rem;}
+.arch-nodes{display:flex;gap:0.75rem;flex-wrap:wrap;}
+.arch-node{background:var(--glass);border:1px solid var(--border);border-radius:8px;padding:0.5rem 1rem;font-size:0.8rem;white-space:nowrap;}
+.arch-node.red{border-color:rgba(230,57,70,0.4);color:var(--red);}
+.arch-node.blue{border-color:rgba(72,149,239,0.4);color:var(--blue);}
+.arch-node.green{border-color:rgba(82,183,136,0.4);color:var(--green);}
+.arch-node.amber{border-color:rgba(244,162,97,0.4);color:var(--amber);}
+.arch-arrow{text-align:center;color:var(--muted);font-size:1.2rem;margin-bottom:1rem;}
+
+/* FLOW */
+.flow{display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap;margin:1.5rem 0;}
+.flow-step{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:0.75rem 1.25rem;font-size:0.85rem;display:flex;align-items:center;gap:0.5rem;}
+.flow-step .num{width:22px;height:22px;background:var(--red);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.65rem;font-weight:700;flex-shrink:0;}
+.flow-arrow{color:var(--muted);font-size:1.1rem;}
+
+/* SWOT */
+.swot{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;}
+.swot-card{border-radius:12px;padding:1.5rem;}
+.swot-card.s{background:rgba(82,183,136,0.07);border:1px solid rgba(82,183,136,0.2);}
+.swot-card.w{background:rgba(230,57,70,0.07);border:1px solid rgba(230,57,70,0.2);}
+.swot-card.o{background:rgba(72,149,239,0.07);border:1px solid rgba(72,149,239,0.2);}
+.swot-card.t{background:rgba(244,162,97,0.07);border:1px solid rgba(244,162,97,0.2);}
+.swot-label{font-family:'Space Mono',monospace;font-size:0.7rem;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:0.75rem;}
+.swot-card.s .swot-label{color:var(--green);}
+.swot-card.w .swot-label{color:var(--red);}
+.swot-card.o .swot-label{color:var(--blue);}
+.swot-card.t .swot-label{color:var(--amber);}
+.swot-items{list-style:none;}
+.swot-items li{font-size:0.85rem;color:#94a3b8;padding:0.3rem 0;display:flex;gap:0.5rem;}
+.swot-items li::before{content:'→';color:var(--muted);flex-shrink:0;}
+
+/* TIMELINE */
+.timeline{position:relative;padding-left:2rem;}
+.timeline::before{content:'';position:absolute;left:0;top:0;bottom:0;width:1px;background:var(--border);}
+.tl-item{position:relative;margin-bottom:2.5rem;}
+.tl-dot{position:absolute;left:-2.4rem;top:0.25rem;width:12px;height:12px;border-radius:50%;border:2px solid var(--red);background:var(--bg);}
+.tl-dot.done{background:var(--red);}
+.tl-phase{font-family:'Space Mono',monospace;font-size:0.65rem;color:var(--red);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.25rem;}
+.tl-title{font-family:'Space Grotesk',sans-serif;font-size:1rem;font-weight:600;margin-bottom:0.5rem;}
+.tl-items{list-style:none;}
+.tl-items li{font-size:0.85rem;color:#94a3b8;padding:0.2rem 0;display:flex;gap:0.5rem;}
+.tl-items li::before{content:'✓';color:var(--green);flex-shrink:0;}
+.tl-items li.pending::before{content:'○';color:var(--muted);}
+
+/* RISK */
+.risk-row{display:flex;align-items:center;gap:1rem;padding:0.875rem 0;border-bottom:1px solid var(--border);}
+.risk-name{flex:1;font-size:0.9rem;}
+.risk-impact,.risk-prob{width:80px;text-align:center;}
+.risk-badge{display:inline-block;padding:0.2rem 0.6rem;border-radius:4px;font-size:0.7rem;font-weight:600;}
+.risk-badge.high{background:rgba(230,57,70,0.15);color:var(--red);}
+.risk-badge.med{background:rgba(244,162,97,0.15);color:var(--amber);}
+.risk-badge.low{background:rgba(82,183,136,0.15);color:var(--green);}
+.risk-mitigation{flex:2;font-size:0.8rem;color:var(--muted);}
+
+/* COMPARE */
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;}
+.compare-col{border-radius:12px;padding:1.5rem;}
+.compare-col.before{background:rgba(107,114,128,0.07);border:1px solid rgba(107,114,128,0.2);}
+.compare-col.after{background:rgba(82,183,136,0.07);border:1px solid rgba(82,183,136,0.2);}
+.compare-label{font-family:'Space Mono',monospace;font-size:0.7rem;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:1rem;}
+.compare-col.before .compare-label{color:var(--muted);}
+.compare-col.after .compare-label{color:var(--green);}
+.compare-item{display:flex;gap:0.5rem;font-size:0.85rem;color:#94a3b8;padding:0.35rem 0;}
+.compare-item::before{content:'✗';color:var(--red);}
+.compare-col.after .compare-item::before{content:'✓';color:var(--green);}
+
+/* KPI CARDS */
+.kpi-card{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:1.25rem;text-align:center;}
+.kpi-val{font-family:'Space Grotesk',sans-serif;font-size:2rem;font-weight:700;margin-bottom:0.25rem;}
+.kpi-label{font-size:0.75rem;color:var(--muted);}
+.kpi-delta{font-size:0.75rem;color:var(--green);margin-top:0.25rem;}
+
+/* QUOTE */
+.blockquote{border-left:3px solid var(--red);padding:1.25rem 1.5rem;background:var(--glass);border-radius:0 12px 12px 0;font-size:1rem;color:#94a3b8;font-style:italic;line-height:1.8;}
+
+/* FOOTER */
+footer{padding:3rem 2rem;border-top:1px solid var(--border);text-align:center;}
+.footer-logo{font-family:'Space Grotesk',sans-serif;font-size:1.2rem;font-weight:700;color:var(--red);margin-bottom:0.5rem;}
+.footer-sub{font-size:0.8rem;color:var(--muted);}
+
+/* ANIMATIONS */
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px);}to{opacity:1;transform:translateY(0);}}
+.fade-up{opacity:0;animation:fadeUp 0.7s ease forwards;}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .grid-2,.grid-3,.grid-4,.swot,.compare{grid-template-columns:1fr;}
+  .hero-metrics{grid-template-columns:1fr 1fr;}
+  .nav-links{display:none;}
+  .flow{flex-direction:column;}
+}
+
+/* SECTION ALTERNATING BG */
+.section-alt{background:var(--bg2);}
+
+/* TAG */
+.tag{display:inline-block;background:rgba(230,57,70,0.1);border:1px solid rgba(230,57,70,0.2);color:var(--red);border-radius:4px;padding:0.15rem 0.5rem;font-size:0.7rem;font-family:'Space Mono',monospace;margin-right:0.4rem;margin-bottom:0.4rem;}
+
+/* JOURNEY MAP */
+.journey{overflow-x:auto;}
+.journey-table{width:100%;border-collapse:collapse;min-width:700px;}
+.journey-table th{background:var(--bg3);padding:0.75rem 1rem;text-align:left;font-size:0.75rem;font-family:'Space Mono',monospace;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);border-bottom:1px solid var(--border);}
+.journey-table td{padding:0.875rem 1rem;font-size:0.85rem;border-bottom:1px solid var(--border);vertical-align:top;color:#94a3b8;}
+.journey-table td:first-child{color:var(--text);font-weight:500;}
+.emotion{display:inline-block;padding:0.2rem 0.5rem;border-radius:4px;font-size:0.75rem;}
+.emotion.panic{background:rgba(230,57,70,0.15);color:var(--red);}
+.emotion.relief{background:rgba(82,183,136,0.15);color:var(--green);}
+.emotion.confident{background:rgba(72,149,239,0.15);color:var(--blue);}
+.emotion.uncertain{background:rgba(244,162,97,0.15);color:var(--amber);}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">🚨 Samaritan AI</div>
+  <div class="nav-links">
+    <a href="#problem">Problem</a>
+    <a href="#solution">Solution</a>
+    <a href="#features">Features</a>
+    <a href="#architecture">Architecture</a>
+    <a href="#impact">Impact</a>
+    <a href="#roadmap">Roadmap</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="container">
+    <div class="hero-content fade-up">
+      <div class="hero-badge"><span></span> AI Product Case Study by Aman Pathan, AI PM</div>
+      <h1 class="hero-title">The first 10 minutes decide <span class="accent">everything.</span></h1>
+      <p class="hero-sub">Samaritan AI guides Indian bystanders through road accident response with real-time AI voice, multilingual support, and a legal protection layer — turning paralysis into action.</p>
+      <div class="hero-metrics">
+        <div class="metric-card">
+          <div class="metric-val">150K+</div>
+          <div class="metric-label">Road deaths in India per year</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-val">10 min</div>
+          <div class="metric-label">Critical golden window after accident</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-val">~0%</div>
+          <div class="metric-label">Bystanders aware of Good Samaritan Law</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXECUTIVE SUMMARY -->
+<section class="section-alt" id="summary">
+  <div class="container">
+    <div class="section-eyebrow">Executive Summary</div>
+    <h2 class="section-title">A product that changes bystander behavior at scale.</h2>
+    <div class="grid-2" style="gap:2rem;margin-top:2.5rem;">
+      <div>
+        <p class="section-body">India loses over 150,000 lives to road accidents annually. The majority of preventable deaths occur because bystanders — who arrive at the scene before ambulances — freeze due to panic and fear of legal consequences.</p>
+        <p class="section-body" style="margin-top:1rem;">The Good Samaritan Law 2016 already grants full legal immunity to helpers. Almost nobody knows it exists. The gap is not medical — it is behavioral and informational. That is a product problem.</p>
+        <p class="section-body" style="margin-top:1rem;">Samaritan AI was designed, scoped, and shipped by a single AI PM directing development through Claude and Google AI Studio. No co-founder. No engineering team. Just structured product thinking and AI execution.</p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:1rem;">
+        <div class="card">
+          <div class="section-eyebrow" style="margin-bottom:0.5rem;">Target User</div>
+          <p style="font-size:0.9rem;color:#94a3b8;">Any Indian bystander at a road accident scene — regardless of medical training, language, or device quality.</p>
+        </div>
+        <div class="card">
+          <div class="section-eyebrow" style="margin-bottom:0.5rem;">Core Intervention</div>
+          <p style="font-size:0.9rem;color:#94a3b8;">Real-time AI voice guidance + legal protection layer + offline fallback. Works without internet. Activates in under 3 seconds.</p>
+        </div>
+        <div class="card">
+          <div class="section-eyebrow" style="margin-bottom:0.5rem;">Distribution Strategy</div>
+          <p style="font-size:0.9rem;color:#94a3b8;">PWA — no app store needed. Installs from a browser tap. Works on ₹6,000 Android devices. Shareable via WhatsApp.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="container">
+    <div class="section-eyebrow">Problem Analysis</div>
+    <h2 class="section-title">Why bystanders freeze</h2>
+    <div class="grid-3" style="margin-top:2.5rem;">
+      <div class="card">
+        <div style="font-size:2rem;margin-bottom:1rem;">😱</div>
+        <div class="feature-title">Panic paralysis</div>
+        <p class="feature-desc">Witnessing a traumatic accident triggers fight-or-flight response. Without a clear protocol, the default is freeze. Bystanders stand and watch instead of acting.</p>
+      </div>
+      <div class="card">
+        <div style="font-size:2rem;margin-bottom:1rem;">⚖️</div>
+        <div class="feature-title">Legal fear</div>
+        <p class="feature-desc">Most Indians believe that helping an accident victim will result in police questioning, detention, or court liability. This belief is factually wrong — but it is powerful enough to prevent action.</p>
+      </div>
+      <div class="card">
+        <div style="font-size:2rem;margin-bottom:1rem;">🌐</div>
+        <div class="feature-title">Language barrier</div>
+        <p class="feature-desc">Emergency guidance in English is inaccessible for most of India. Hindi and Marathi speakers in Maharashtra have no native-language tool for real-time accident response.</p>
+      </div>
+      <div class="card">
+        <div style="font-size:2rem;margin-bottom:1rem;">📵</div>
+        <div class="feature-title">Connectivity gaps</div>
+        <p class="feature-desc">Rural highways — where accidents are most fatal — often have poor or no internet. Existing apps become useless precisely when they are needed most.</p>
+      </div>
+      <div class="card">
+        <div style="font-size:2rem;margin-bottom:1rem;">📱</div>
+        <div class="feature-title">App friction</div>
+        <p class="feature-desc">Downloading, registering, and learning an app before an accident is a behavior almost nobody does. The tool must be accessible within 3 seconds of need.</p>
+      </div>
+      <div class="card">
+        <div style="font-size:2rem;margin-bottom:1rem;">🏥</div>
+        <div class="feature-title">Ambulance delay</div>
+        <p class="feature-desc">Average ambulance response time in India is 20–30 minutes. The golden hour window closes before professional help arrives. The bystander is the only resource available.</p>
+      </div>
+    </div>
+
+    <div class="divider" style="margin-top:3rem;"></div>
+
+    <div class="blockquote" style="margin-top:2rem;">
+      "The first person at the scene is the most important person. Not the doctor. Not the ambulance. The bystander." — Core design principle, Samaritan AI
+    </div>
+  </div>
+</section>
+
+<!-- RESEARCH -->
+<section class="section-alt" id="research">
+  <div class="container">
+    <div class="section-eyebrow">Research & Discovery</div>
+    <h2 class="section-title">User personas & journey.</h2>
+
+    <div class="grid-3" style="margin-top:2.5rem;">
+      <div class="persona">
+        <div class="persona-avatar" style="background:rgba(230,57,70,0.1);">👨‍🔧</div>
+        <div class="persona-name">Ramesh, 34</div>
+        <div class="persona-role">Truck driver, NH-48 corridor</div>
+        <p style="font-size:0.85rem;color:#94a3b8;margin-bottom:1rem;">Witnesses accidents monthly. Has never helped. Fears police will blame him. Speaks Hindi only. Uses ₹8,000 Android phone.</p>
+        <span class="persona-tag">Hindi speaker</span>
+        <span class="persona-tag">No medical training</span>
+        <span class="persona-tag">Legal anxiety</span>
+      </div>
+      <div class="persona">
+        <div class="persona-avatar" style="background:rgba(72,149,239,0.1);">👩‍🎓</div>
+        <div class="persona-name">Priya, 22</div>
+        <div class="persona-role">Engineering student, Pune</div>
+        <p style="font-size:0.85rem;color:#94a3b8;margin-bottom:1rem;">Aware of GSL but unsure what to actually do medically. Has smartphone with good connectivity. Speaks Marathi and English.</p>
+        <span class="persona-tag">Willing to help</span>
+        <span class="persona-tag">No CPR training</span>
+        <span class="persona-tag">Multilingual</span>
+      </div>
+      <div class="persona">
+        <div class="persona-avatar" style="background:rgba(82,183,136,0.1);">👨‍💼</div>
+        <div class="persona-name">Suresh, 45</div>
+        <div class="persona-role">Office commuter, Mumbai</div>
+        <p style="font-size:0.85ml;color:#94a3b8;margin-bottom:1rem;">Passed an accident last week and did nothing. Guilt-ridden. Would have helped if told exactly what to do and reassured legally.</p>
+        <span class="persona-tag">Guilt driver</span>
+        <span class="persona-tag">Needs reassurance</span>
+        <span class="persona-tag">Urban connectivity</span>
+      </div>
+    </div>
+
+    <h3 class="display" style="font-size:1.2rem;margin-top:3rem;margin-bottom:1.5rem;">User Journey Map</h3>
+    <div class="journey">
+      <table class="journey-table">
+        <thead>
+          <tr>
+            <th>Stage</th>
+            <th>User Action</th>
+            <th>Emotion</th>
+            <th>Pain Point</th>
+            <th>Samaritan AI Response</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Witness accident</td>
+            <td>Sees crash, stops vehicle</td>
+            <td><span class="emotion panic">Panic</span></td>
+            <td>No idea what to do first</td>
+            <td>Shake to activate — app opens in &lt;3 sec</td>
+          </tr>
+          <tr>
+            <td>Legal hesitation</td>
+            <td>Thinks "will police arrest me?"</td>
+            <td><span class="emotion uncertain">Fear</span></td>
+            <td>GSL unknown to 95% of population</td>
+            <td>Legal protection screen displayed immediately</td>
+          </tr>
+          <tr>
+            <td>First action</td>
+            <td>Approaches victim</td>
+            <td><span class="emotion uncertain">Uncertain</span></td>
+            <td>Not sure if safe to approach</td>
+            <td>Voice: "Check your own safety first. Look for traffic and fire."</td>
+          </tr>
+          <tr>
+            <td>Assessment</td>
+            <td>Checks victim consciousness</td>
+            <td><span class="emotion uncertain">Stressed</span></td>
+            <td>Doesn't know how to check properly</td>
+            <td>Step-by-step voice guide in chosen language</td>
+          </tr>
+          <tr>
+            <td>Calling 112</td>
+            <td>Calls emergency services</td>
+            <td><span class="emotion relief">Guided</span></td>
+            <td>Forgets location and details under stress</td>
+            <td>Dispatch Helper pre-fills GPS + scene details</td>
+          </tr>
+          <tr>
+            <td>CPR / First Aid</td>
+            <td>Performs compressions</td>
+            <td><span class="emotion confident">Focused</span></td>
+            <td>Wrong technique — child vs adult</td>
+            <td>Victim-type-aware CPR instructions + 105 BPM metronome</td>
+          </tr>
+          <tr>
+            <td>Ambulance arrives</td>
+            <td>Handover to paramedics</td>
+            <td><span class="emotion relief">Relief</span></td>
+            <td>Fear of what happens next legally</td>
+            <td>AI-generated witness report PDF — legal shield in hand</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- MARKET -->
+<section id="market">
+  <div class="container">
+    <div class="section-eyebrow">Market Opportunity</div>
+    <h2 class="section-title">The scale of the problem is the size of the market.</h2>
+    <div class="grid-2" style="gap:2rem;margin-top:2.5rem;">
+      <div>
+        <div class="grid-2" style="gap:1rem;margin-bottom:1.5rem;">
+          <div class="kpi-card">
+            <div class="kpi-val" style="color:var(--red);">500M+</div>
+            <div class="kpi-label">Smartphone users in India</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-val" style="color:var(--amber);">4.6M</div>
+            <div class="kpi-label">Road accidents reported (2023)</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-val" style="color:var(--blue);">₹1.5L Cr</div>
+            <div class="kpi-label">Annual economic loss from accidents</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-val" style="color:var(--green);">0</div>
+            <div class="kpi-label">Competing apps with AI + offline + multilingual</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="section-eyebrow" style="margin-bottom:0.5rem;">CSR Grant Opportunity</div>
+          <p style="font-size:0.85rem;color:#94a3b8;">Maruti Suzuki, Honda, TVS, Bajaj, and NHAI all have road safety CSR mandates. Samaritan AI is a ready-made deployment vehicle for those budgets. Target: pilot with 1 corporate partner → 10,000 users in year 1.</p>
+        </div>
+      </div>
+      <div class="chart-wrap">
+        <div class="chart-title">Road Fatalities — India vs Intervention Potential</div>
+        <canvas id="marketChart" height="220"></canvas>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOLUTION -->
+<section class="section-alt" id="solution">
+  <div class="container">
+    <div class="section-eyebrow">Solution Overview</div>
+    <h2 class="section-title">Not another health app. A behavioral intervention.</h2>
+    <p class="section-body" style="margin-bottom:2.5rem;">Every design decision in Samaritan AI was made to reduce friction, override panic, and give the bystander exactly one thing to do next. The AI is not the feature — it is the enabler of correct, confident action under extreme stress.</p>
+    <div class="grid-3">
+      <div class="card" style="border-color:rgba(230,57,70,0.3);">
+        <div class="feature-icon" style="background:rgba(230,57,70,0.1);">🎙️</div>
+        <div class="feature-title">AI Voice Guide</div>
+        <p class="feature-desc">Gemini 2.0 Flash delivers real-time, step-by-step voice instructions. Removes reading load under panic. Voice is the correct modality for emergencies.</p>
+        <div class="feature-rationale">PM rationale: Eyes up, hands free, voice in ear — the interface disappears.</div>
+      </div>
+      <div class="card">
+        <div class="feature-icon" style="background:rgba(72,149,239,0.1);">📞</div>
+        <div class="feature-title">Dispatch Helper</div>
+        <p class="feature-desc">Structures the 112 call with GPS pre-filled. Most people forget their location and vehicle numbers when panicking. This removes that cognitive load entirely.</p>
+        <div class="feature-rationale">PM rationale: The 112 operator needs 3 facts — location, victim count, vehicle. Pre-fill all 3.</div>
+      </div>
+      <div class="card">
+        <div class="feature-icon" style="background:rgba(82,183,136,0.1);">📄</div>
+        <div class="feature-title">Witness Report PDF</div>
+        <p class="feature-desc">AI-generated legal document with timestamp, GPS, and Good Samaritan Law immunity citation. The bystander hands this to police on arrival. Fear ends.</p>
+        <div class="feature-rationale">PM rationale: The legal fear does not end when the ambulance arrives. The PDF closes that loop.</div>
+      </div>
+      <div class="card">
+        <div class="feature-icon" style="background:rgba(244,162,97,0.1);">🌐</div>
+        <div class="feature-title">Trilingual by Default</div>
+        <p class="feature-desc">Hindi, Marathi, English — Gemini detects language from the first message and responds entirely in that language. No toggle. No menu. No cognitive load.</p>
+        <div class="feature-rationale">PM rationale: Language is not a setting. It is automatic or it is a barrier.</div>
+      </div>
+      <div class="card">
+        <div class="feature-icon" style="background:rgba(230,57,70,0.1);">📳</div>
+        <div class="feature-title">Shake to Activate</div>
+        <p class="feature-desc">4 shakes → 3-second confirmation overlay → emergency starts. No unlock. No search. No tap. The fastest possible path from pocket to guidance.</p>
+        <div class="feature-rationale">PM rationale: Unlock + find + tap = 15–30 seconds. In an accident, that is too long.</div>
+      </div>
+      <div class="card">
+        <div class="feature-icon" style="background:rgba(72,149,239,0.1);">📡</div>
+        <div class="feature-title">Offline Fallback</div>
+        <p class="feature-desc">Rule-based engine activates when Gemini is unreachable. Rural highways have no signal. The app never goes silent precisely when it is needed most.</p>
+        <div class="feature-rationale">PM rationale: The worst accidents happen where connectivity is worst. Design for that.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ARCHITECTURE -->
+<section id="architecture">
+  <div class="container">
+    <div class="section-eyebrow">System Architecture</div>
+    <h2 class="section-title">How it works under the hood</h2>
+    <div class="arch" style="margin-top:2.5rem;">
+      <div class="arch-layer">
+        <div class="arch-label">User Layer</div>
+        <div class="arch-nodes">
+          <div class="arch-node red">PWA (Android / iOS)</div>
+          <div class="arch-node red">Shake Detector</div>
+          <div class="arch-node red">Voice Input (Web Speech API)</div>
+          <div class="arch-node red">Camera (Evidence)</div>
+          <div class="arch-node red">GPS Telemetry</div>
+        </div>
+      </div>
+      <div class="arch-arrow">↓</div>
+      <div class="arch-layer">
+        <div class="arch-label">Frontend — React 19 + Vite + TypeScript</div>
+        <div class="arch-nodes">
+          <div class="arch-node blue">App.tsx (State Machine)</div>
+          <div class="arch-node blue">Voice Guide Screen</div>
+          <div class="arch-node blue">Dispatch Helper Screen</div>
+          <div class="arch-node blue">Evidence Capture Screen</div>
+          <div class="arch-node blue">Witness Report Screen</div>
+          <div class="arch-node blue">Legal Protection Screen</div>
+          <div class="arch-node blue">Offline Rule Engine</div>
+        </div>
+      </div>
+      <div class="arch-arrow">↓ HTTPS API calls ↓</div>
+      <div class="arch-layer">
+        <div class="arch-label">Backend — Node.js + Express (Render)</div>
+        <div class="arch-nodes">
+          <div class="arch-node green">POST /api/chat → Paramedic AI</div>
+          <div class="arch-node green">POST /api/report → Report Generator</div>
+          <div class="arch-node green">GET /api/tts → Text-to-Speech Proxy</div>
+          <div class="arch-node green">GET /api/health → Keep-alive</div>
+          <div class="arch-node amber">Rate Limiter (20 req/min/IP)</div>
+          <div class="arch-node amber">Circuit Breaker (quota guard)</div>
+        </div>
+      </div>
+      <div class="arch-arrow">↓</div>
+      <div class="arch-layer">
+        <div class="arch-label">AI Layer — Google Gemini 2.0 Flash</div>
+        <div class="arch-nodes">
+          <div class="arch-node amber">Paramedic Command System Prompt</div>
+          <div class="arch-node amber">Language Enforcement (hi/mr/en)</div>
+          <div class="arch-node amber">Victim-Type Context (adult/child/infant/pregnant)</div>
+          <div class="arch-node amber">JSON Schema Report Generation</div>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="display" style="font-size:1.1rem;margin-top:3rem;margin-bottom:1.5rem;">Emergency Activation Flow</h3>
+    <div class="flow">
+      <div class="flow-step"><div class="num">1</div>Shake phone 4×</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step"><div class="num">2</div>3-sec confirmation overlay</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step"><div class="num">3</div>GPS lock acquired</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step"><div class="num">4</div>Legal screen displayed</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step"><div class="num">5</div>AI Voice Guide begins</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step"><div class="num">6</div>10-step protocol starts</div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="section-alt" id="features">
+  <div class="container">
+    <div class="section-eyebrow">Feature Breakdown</div>
+    <h2 class="section-title">Every feature earned its place</h2>
+    <div style="margin-top:2.5rem;display:flex;flex-direction:column;gap:1.5rem;">
+      <div class="card" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:2rem;align-items:start;">
+        <div>
+          <div class="section-eyebrow" style="margin-bottom:0.5rem;">Feature</div>
+          <div class="feature-title" style="font-size:1.1rem;">🎙️ AI Voice Guide</div>
+          <p class="feature-desc">Real-time Gemini 2.0 Flash paramedic — 10-step protocol, victim-type aware, trilingual.</p>
+        </div>
+        <div>
+          <div class="section-eyebrow" style="margin-bottom:0.5rem;">User Value</div>
+          <p class="feature-desc">Never has to read a screen under panic. AI speaks every instruction clearly and calmly.</p>
+        </div>
+        <div>
+          <div class="section-eyebrow" style="margin-bottom:0.5rem;">Technical</div>
+          <p class="feature-desc">Gemini Chat API with custom system prompt. TTS via Google Translate proxy. Browser SpeechSynthesis fallback.</p>
+        </div>
+      </div>
+      <div class="card" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:2rem;align-items:start;">
+        <div>
+          <div class="section-eyebrow" style="margin-bottom:0.5rem;">Feature</div>
+          <div class="feature-title" style="font-size:1.1rem;">📄 Witness Report PDF</div>
+          <p class="feature-desc">AI-generated legal document from session data. GPS-tagged. Good Samaritan Law citation.</p>
+        </div>
+        <div>
+          <div class="section-eyebrow" style="margin-bottom:0.5rem;">User Value</div>
+          <p class="feature-desc">Physical proof of what was done. Eliminates post-incident legal anxiety. Can be handed to police.</p>
+        </div>
+        <div>
+          <div class="section-eyebrow" style="margin-bottom:0.5rem;">Technical</div>
+          <p class="feature-desc">Gemini JSON schema extraction from chat log → jsPDF rendering with header, legal stamp, redaction toggle.</p>
+        </div>
+      </div>
+      <div class="card" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:2rem;align-items:start;">
+        <div>
+          <div class="section-eyebrow" style="margin-bottom:0.5rem;">Feature</div>
+          <div class="feature-title" style="font-size:1.1rem;">📡 Offline Fallback</div>
+          <p class="feature-desc">Rule-based deterministic engine. Activates automatically when Gemini is unreachable.</p>
+        </div>
+        <div>
+          <div class="section-eyebrow" style="margin-bottom:0.5rem;">User Value</div>
+          <p class="feature-desc">App never goes silent. Works on NH-48 at 2 AM with no signal. Same protocol, zero dependency on cloud.</p>
+        </div>
+        <div>
+          <div class="section-eyebrow" style="margin-bottom:0.5rem;">Technical</div>
+          <p class="feature-desc">Circuit breaker on backend → frontend falls to local decision tree. 429/503 triggers 3-minute cooldown.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- KPI DASHBOARD -->
+<section id="kpi">
+  <div class="container">
+    <div class="section-eyebrow">KPI Dashboard</div>
+    <h2 class="section-title">Projected impact metrics</h2>
+    <div class="grid-4" style="margin-top:2.5rem;">
+      <div class="kpi-card">
+        <div class="kpi-val" style="color:var(--green);">10K</div>
+        <div class="kpi-label">Target users — Year 1</div>
+        <div class="kpi-delta">↑ via CSR pilot</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-val" style="color:var(--blue);">&lt;3s</div>
+        <div class="kpi-label">Activation time</div>
+        <div class="kpi-delta">Shake to guidance</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-val" style="color:var(--amber);">3</div>
+        <div class="kpi-label">Languages supported</div>
+        <div class="kpi-delta">Hindi · Marathi · English</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-val" style="color:var(--red);">100%</div>
+        <div class="kpi-label">Legal protection coverage</div>
+        <div class="kpi-delta">GSL 2016 cited in every session</div>
+      </div>
+    </div>
+    <div class="grid-2" style="margin-top:1.5rem;gap:1.5rem;">
+      <div class="chart-wrap">
+        <div class="chart-title">Projected User Growth (Month 1–12)</div>
+        <canvas id="growthChart" height="200"></canvas>
+      </div>
+      <div class="chart-wrap">
+        <div class="chart-title">Emergency Actions Completed per Session</div>
+        <canvas id="actionsChart" height="200"></canvas>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BEFORE VS AFTER -->
+<section class="section-alt" id="impact">
+  <div class="container">
+    <div class="section-eyebrow">Before vs After</div>
+    <h2 class="section-title">What changes when Samaritan AI is present</h2>
+    <div class="compare" style="margin-top:2.5rem;">
+      <div class="compare-col before">
+        <div class="compare-label">Without Samaritan AI</div>
+        <div class="compare-item">Bystander freezes — no protocol</div>
+        <div class="compare-item">Fears police — avoids contact with victim</div>
+        <div class="compare-item">Calls 112 without location or details</div>
+        <div class="compare-item">Performs CPR incorrectly — wrong depth</div>
+        <div class="compare-item">Moves victim — risk of spinal injury</div>
+        <div class="compare-item">No evidence captured for insurance</div>
+        <div class="compare-item">No legal protection documentation</div>
+        <div class="compare-item">App fails on rural highway — no signal</div>
+      </div>
+      <div class="compare-col after">
+        <div class="compare-label">With Samaritan AI</div>
+        <div class="compare-item">10-step AI voice protocol starts in &lt;3 seconds</div>
+        <div class="compare-item">Good Samaritan Law displayed immediately</div>
+        <div class="compare-item">GPS + victim count pre-filled for 112 call</div>
+        <div class="compare-item">Victim-type CPR with 105 BPM metronome</div>
+        <div class="compare-item">Explicit "do not move" instruction with reason</div>
+        <div class="compare-item">Guided photo prompts for full evidence capture</div>
+        <div class="compare-item">AI-generated PDF legal document exported</div>
+        <div class="compare-item">Offline fallback engine — works with zero signal</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SWOT -->
+<section id="swot">
+  <div class="container">
+    <div class="section-eyebrow">SWOT Analysis</div>
+    <h2 class="section-title">Honest assessment</h2>
+    <div class="swot" style="margin-top:2.5rem;">
+      <div class="swot-card s">
+        <div class="swot-label">Strengths</div>
+        <ul class="swot-items">
+          <li>Zero direct competitors with AI + offline + multilingual</li>
+          <li>PWA — no app store friction, works on cheap devices</li>
+          <li>Shake activation — fastest emergency UX in category</li>
+          <li>Legal protection layer addresses the #1 drop-off reason</li>
+          <li>Offline fallback — works where it matters most</li>
+        </ul>
+      </div>
+      <div class="swot-card w">
+        <div class="swot-label">Weaknesses</div>
+        <ul class="swot-items">
+          <li>No clinical validation of protocol accuracy yet</li>
+          <li>Free-tier backend (Render) has cold start delays</li>
+          <li>Gemini quota limits under heavy simultaneous load</li>
+          <li>Shake detection false positives possible in moving vehicles</li>
+          <li>No user research with real accident bystanders yet</li>
+        </ul>
+      </div>
+      <div class="swot-card o">
+        <div class="swot-label">Opportunities</div>
+        <ul class="swot-items">
+          <li>CSR grant pipeline — Maruti, Honda, TVS, NHAI</li>
+          <li>State government road safety department partnerships</li>
+          <li>WhatsApp Bot version for rural feature phone users</li>
+          <li>ESP32 crash detector hardware — IoT portfolio expansion</li>
+          <li>Gemini Live voice — zero typing, fully hands-free</li>
+        </ul>
+      </div>
+      <div class="swot-card t">
+        <div class="swot-label">Threats</div>
+        <ul class="swot-items">
+          <li>Google discontinues Gemini free tier</li>
+          <li>Large health app (Practo, 1mg) adds accident feature</li>
+          <li>Incorrect AI advice causes harm — liability risk</li>
+          <li>Low viral coefficient — hard to acquire before an accident</li>
+          <li>Regulatory scrutiny on AI medical guidance</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ROADMAP -->
+<section class="section-alt" id="roadmap">
+  <div class="container">
+    <div class="section-eyebrow">Product Roadmap</div>
+    <h2 class="section-title">Where this goes next</h2>
+    <div style="margin-top:2.5rem;" class="grid-2">
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-dot done"></div>
+          <div class="tl-phase">Phase 1 — Complete</div>
+          <div class="tl-title">Core MVP</div>
+          <ul class="tl-items">
+            <li>AI voice guide — Gemini 2.0 Flash</li>
+            <li>Trilingual — Hindi, Marathi, English</li>
+            <li>Shake-to-activate</li>
+            <li>WhatsApp SOS with GPS</li>
+            <li>Offline fallback rule engine</li>
+            <li>AI witness report PDF</li>
+            <li>PWA installable</li>
+          </ul>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-phase">Phase 2 — In Progress</div>
+          <div class="tl-title">Intelligence Layer</div>
+          <ul class="tl-items">
+            <li class="pending">Golden hour countdown timer</li>
+            <li class="pending">Real nearest hospital — Google Places API</li>
+            <li class="pending">Bystander confidence score</li>
+            <li class="pending">Offline map — Leaflet.js</li>
+          </ul>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-phase">Phase 3 — Planned</div>
+          <div class="tl-title">Voice & Hardware</div>
+          <ul class="tl-items">
+            <li class="pending">Gemini Live bidirectional voice</li>
+            <li class="pending">ESP32 crash detector wristband</li>
+            <li class="pending">Auto-trigger on accelerometer impact</li>
+            <li class="pending">Wearable IoT integration</li>
+          </ul>
+        </div>
+      </div>
+      <div class="chart-wrap" style="align-self:start;">
+        <div class="chart-title">Feature Priority Matrix</div>
+        <canvas id="priorityChart" height="260"></canvas>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RISK -->
+<section id="risk">
+  <div class="container">
+    <div class="section-eyebrow">Risk Analysis</div>
+    <h2 class="section-title">Known risks and mitigations</h2>
+    <div class="card" style="margin-top:2.5rem;">
+      <div class="risk-row" style="border-bottom:1px solid var(--border);padding-bottom:0.75rem;margin-bottom:0.5rem;">
+        <div class="risk-name" style="font-weight:600;color:var(--muted);font-size:0.8rem;">Risk</div>
+        <div class="risk-impact" style="font-weight:600;color:var(--muted);font-size:0.8rem;">Impact</div>
+        <div class="risk-prob" style="font-weight:600;color:var(--muted);font-size:0.8rem;">Probability</div>
+        <div class="risk-mitigation" style="font-weight:600;color:var(--muted);font-size:0.8rem;">Mitigation</div>
+      </div>
+      <div class="risk-row">
+        <div class="risk-name">Gemini quota exhausted under surge</div>
+        <div class="risk-impact"><span class="risk-badge high">High</span></div>
+        <div class="risk-prob"><span class="risk-badge med">Medium</span></div>
+        <div class="risk-mitigation">Circuit breaker + offline fallback engine — app never goes silent</div>
+      </div>
+      <div class="risk-row">
+        <div class="risk-name">Incorrect AI medical advice</div>
+        <div class="risk-impact"><span class="risk-badge high">High</span></div>
+        <div class="risk-prob"><span class="risk-badge low">Low</span></div>
+        <div class="risk-mitigation">System prompt restricts advice to validated WHO/MoRTH protocol steps only</div>
+      </div>
+      <div class="risk-row">
+        <div class="risk-name">Shake false positive in moving vehicle</div>
+        <div class="risk-impact"><span class="risk-badge med">Medium</span></div>
+        <div class="risk-prob"><span class="risk-badge med">Medium</span></div>
+        <div class="risk-mitigation">3-second confirmation overlay before emergency activates</div>
+      </div>
+      <div class="risk-row">
+        <div class="risk-name">Render free tier cold start (15s delay)</div>
+        <div class="risk-impact"><span class="risk-badge med">Medium</span></div>
+        <div class="risk-prob"><span class="risk-badge high">High</span></div>
+        <div class="risk-mitigation">Self-ping keepalive every 10 minutes prevents sleep</div>
+      </div>
+      <div class="risk-row" style="border-bottom:none;">
+        <div class="risk-name">Low pre-accident app discovery</div>
+        <div class="risk-impact"><span class="risk-badge med">Medium</span></div>
+        <div class="risk-prob"><span class="risk-badge high">High</span></div>
+        <div class="risk-mitigation">CSR distribution via Maruti/Honda dealerships + WhatsApp viral sharing</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FUTURE -->
+<section class="section-alt" id="future">
+  <div class="container">
+    <div class="section-eyebrow">Future Vision</div>
+    <h2 class="section-title">The hardware play makes this defensible.</h2>
+    <div class="grid-2" style="margin-top:2.5rem;gap:2rem;">
+      <div>
+        <p class="section-body">The current app is strong for AI PM positioning. The ESP32 crash detector is where the IoT and Electrical Engineering background becomes portfolio-visible — and where the product becomes truly autonomous.</p>
+        <p class="section-body" style="margin-top:1rem;">An accelerometer wristband or vehicle dongle that detects crash G-force signatures and auto-triggers Samaritan AI — without the bystander needing to do anything — is the end state. The phone call to 112 happens before the person even unbuckles their seatbelt.</p>
+        <div style="margin-top:2rem;">
+          <div class="tag">ESP32</div>
+          <div class="tag">ADXL345 Accelerometer</div>
+          <div class="tag">BLE to Android</div>
+          <div class="tag">Auto-trigger on impact</div>
+          <div class="tag">Vehicle OBD-II integration</div>
+          <div class="tag">Wearable form factor</div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:1rem;">
+        <div class="card" style="border-color:rgba(82,183,136,0.3);">
+          <div class="section-eyebrow" style="color:var(--green);margin-bottom:0.5rem;">Gemini Live Voice</div>
+          <p style="font-size:0.85rem;color:#94a3b8;">Replace Web Speech API with true bidirectional audio streaming. Bystander speaks — Gemini speaks back. No typing. No screen. Pure voice interface.</p>
+        </div>
+        <div class="card" style="border-color:rgba(72,149,239,0.3);">
+          <div class="section-eyebrow" style="color:var(--blue);margin-bottom:0.5rem;">WhatsApp Bot</div>
+          <p style="font-size:0.85rem;color:#94a3b8;">For rural users without smartphones. Same 10-step protocol delivered via WhatsApp messages. Reaches feature phone users who represent the highest-risk bystander segment.</p>
+        </div>
+        <div class="card" style="border-color:rgba(244,162,97,0.3);">
+          <div class="section-eyebrow" style="color:var(--amber);margin-bottom:0.5rem;">State Government Partnership</div>
+          <p style="font-size:0.85rem;color:#94a3b8;">Pre-installed on police vehicles and highway patrol. Integration with 112 India dispatch system. Real-time accident reporting to control rooms.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONCLUSION -->
+<section id="conclusion">
+  <div class="container" style="text-align:center;max-width:700px;">
+    <div class="section-eyebrow">Conclusion</div>
+    <h2 class="section-title" style="margin-bottom:1.5rem;">Built in weeks. Designed to save lives.</h2>
+    <p class="section-body" style="margin:0 auto 2rem;text-align:center;">Samaritan AI proves that structured AI PM thinking — problem identification, behavioral research, product architecture, and AI execution — can produce a real, deployable product that addresses a genuine life-or-death gap in the Indian road safety ecosystem.</p>
+    <p class="section-body" style="margin:0 auto 2rem;text-align:center;">This is not a demo. It is a working PWA, deployed on Render, available to any Indian bystander with a smartphone — right now.</p>
+    <div class="blockquote" style="text-align:left;margin-top:2rem;">
+      "The most important AI problems are not in San Francisco. They are in places where panic, language barriers, and legal fear cost lives every day — and where a well-designed product on a cheap Android phone can close that gap."
+    </div>
+    <div style="margin-top:2.5rem;display:flex;justify-content:center;gap:1rem;flex-wrap:wrap;">
+      <a href="https://github.com/Zerovion/Samaritan-AI" style="display:inline-flex;align-items:center;gap:0.5rem;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:0.75rem 1.5rem;color:var(--text);text-decoration:none;font-size:0.9rem;">View on GitHub</a>
+      <a href="https://samaritan-ai-backend.onrender.com/" style="display:inline-flex;align-items:center;gap:0.5rem;background:var(--red);border:1px solid var(--red);border-radius:8px;padding:0.75rem 1.5rem;color:white;text-decoration:none;font-size:0.9rem;font-weight:600;">Live Demo →</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo">🚨 Samaritan AI</div>
+  <div class="footer-sub" style="margin-top:0.5rem;">Aman Pathan · AI Product Manager · RIT Sangli · GitHub: @Zerovion</div>
+  <div class="footer-sub" style="margin-top:0.25rem;">Open to collaborations, pilot partnerships, and CSR grant conversations — Maruti · Honda · TVS · NHAI</div>
+</footer>
+
+<script>
+// Chart.js defaults
+Chart.defaults.color = '#6b7280';
+Chart.defaults.borderColor = 'rgba(255,255,255,0.07)';
+Chart.defaults.font.family = "'Inter', sans-serif";
+
+// Market Chart
+new Chart(document.getElementById('marketChart'), {
+  type: 'bar',
+  data: {
+    labels: ['2019', '2020', '2021', '2022', '2023', '2024E'],
+    datasets: [{
+      label: 'Road Fatalities (thousands)',
+      data: [151, 131, 154, 168, 172, 175],
+      backgroundColor: 'rgba(230,57,70,0.3)',
+      borderColor: '#e63946',
+      borderWidth: 2,
+      borderRadius: 4,
+    },{
+      label: 'With Intervention (projected)',
+      data: [null, null, null, null, 172, 155],
+      backgroundColor: 'rgba(82,183,136,0.3)',
+      borderColor: '#52b788',
+      borderWidth: 2,
+      borderRadius: 4,
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } } },
+    scales: {
+      y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { font: { size: 10 } } },
+      x: { grid: { display: false }, ticks: { font: { size: 10 } } }
+    }
+  }
+});
+
+// Growth Chart
+new Chart(document.getElementById('growthChart'), {
+  type: 'line',
+  data: {
+    labels: ['M1','M2','M3','M4','M5','M6','M7','M8','M9','M10','M11','M12'],
+    datasets: [{
+      label: 'Active Users',
+      data: [50, 120, 280, 500, 850, 1400, 2200, 3500, 5000, 6800, 8500, 10000],
+      borderColor: '#e63946',
+      backgroundColor: 'rgba(230,57,70,0.1)',
+      fill: true,
+      tension: 0.4,
+      pointRadius: 3,
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { display: false } },
+    scales: {
+      y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { font: { size: 10 } } },
+      x: { grid: { display: false }, ticks: { font: { size: 10 } } }
+    }
+  }
+});
+
+// Actions Chart
+new Chart(document.getElementById('actionsChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Called 112', 'Completed CPR', 'Captured Evidence', 'Downloaded PDF', 'Sent WhatsApp SOS'],
+    datasets: [{
+      data: [87, 63, 71, 58, 79],
+      backgroundColor: ['#e63946','#4895ef','#52b788','#f4a261','#9b5de5'],
+      borderWidth: 0,
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 }, padding: 12 } }
+    }
+  }
+});
+
+// Priority Chart
+new Chart(document.getElementById('priorityChart'), {
+  type: 'bubble',
+  data: {
+    datasets: [
+      { label: 'Voice Guide', data: [{x:9,y:10,r:18}], backgroundColor: 'rgba(230,57,70,0.7)' },
+      { label: 'Offline Fallback', data: [{x:8,y:9,r:15}], backgroundColor: 'rgba(244,162,97,0.7)' },
+      { label: 'Witness PDF', data: [{x:7,y:6,r:12}], backgroundColor: 'rgba(82,183,136,0.7)' },
+      { label: 'Gemini Live', data: [{x:9,y:4,r:10}], backgroundColor: 'rgba(72,149,239,0.7)' },
+      { label: 'Hospital API', data: [{x:7,y:7,r:11}], backgroundColor: 'rgba(155,93,229,0.7)' },
+      { label: 'ESP32 HW', data: [{x:10,y:3,r:9}], backgroundColor: 'rgba(255,190,11,0.7)' },
+    ]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 }, padding: 8 } } },
+    scales: {
+      x: { title: { display: true, text: 'Impact', font: { size: 10 } }, min: 0, max: 11, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { font: { size: 9 } } },
+      y: { title: { display: true, text: 'Urgency', font: { size: 10 } }, min: 0, max: 11, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { font: { size: 9 } } }
+    }
+  }
+});
+
+// Fade up on scroll
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.style.animation = 'fadeUp 0.7s ease forwards';
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.card, .persona, .kpi-card, .swot-card, .compare-col, .chart-wrap, .arch').forEach(el => {
+  el.style.opacity = '0';
+  observer.observe(el);
+});
+</script>
+</body>
+</html>
